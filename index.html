@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Radioaficionado · Costa Rica</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d1117;--sur:#161b22;--sur2:#21262d;--bdr:#30363d;
+  --acc:#f0a500;--acc2:#58a6ff;--ok:#3fb950;--err:#f85149;
+  --nov:#a371f7;--int:#58a6ff;--sup:#f0a500;
+  --tx:#e6edf3;--tx2:#8b949e;--tx3:#6e7681;
+  --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+  --r:8px;--rl:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.6}
+
+/* ── PANTALLA DE BIENVENIDA ── */
+#welcome{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:2rem 1rem;
+  text-align:center;
+}
+.w-badge{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  color:var(--acc);border:1px solid var(--acc);padding:5px 14px;
+  border-radius:20px;margin-bottom:1.5rem;display:inline-block;
+}
+.w-title{font-size:28px;font-weight:500;color:var(--tx);margin-bottom:.4rem;line-height:1.3}
+.w-sub{font-size:14px;color:var(--tx2);margin-bottom:2.5rem;max-width:480px}
+.w-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;width:100%;max-width:580px;margin-bottom:2rem}
+.cat-card{
+  border:2px solid var(--bdr);border-radius:var(--rl);padding:1.25rem 1rem;
+  cursor:pointer;transition:all .2s;background:var(--sur);text-align:left;
+}
+.cat-card:hover{transform:translateY(-2px)}
+.cat-card.nov:hover,.cat-card.nov.sel{border-color:var(--nov);background:#1a1030}
+.cat-card.int:hover,.cat-card.int.sel{border-color:var(--int);background:#0d1e30}
+.cat-card.sup:hover,.cat-card.sup.sel{border-color:var(--sup);background:#1e1500}
+.cat-dot{width:10px;height:10px;border-radius:50%;margin-bottom:.75rem}
+.nov .cat-dot{background:var(--nov)}
+.int .cat-dot{background:var(--int)}
+.sup .cat-dot{background:var(--sup)}
+.cat-name{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.cat-desc{font-size:12px;color:var(--tx2);line-height:1.5}
+.cat-secs{font-size:11px;color:var(--tx3);margin-top:8px;font-family:var(--mono)}
+.w-hint{font-size:12px;color:var(--tx3);margin-bottom:1.5rem}
+.btn-start{
+  padding:12px 32px;background:var(--acc);color:#0d1117;border:none;
+  border-radius:var(--r);font-family:var(--mono);font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:.04em;transition:opacity .15s;
+  opacity:.4;pointer-events:none;
+}
+.btn-start.ready{opacity:1;pointer-events:auto}
+.btn-start.ready:hover{opacity:.85}
+
+/* ── HEADER ── */
+header{
+  border-bottom:1px solid var(--bdr);padding:.8rem 1.25rem;
+  display:flex;align-items:center;gap:.75rem;
+  position:sticky;top:0;background:var(--bg);z-index:100;
+}
+.logo{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.05em;white-space:nowrap}
+.logo span{color:var(--tx2)}
+.cat-pill{
+  font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;
+  font-weight:700;letter-spacing:.04em;cursor:pointer;border:1px solid;
+  transition:opacity .15s;white-space:nowrap;
+}
+.cat-pill:hover{opacity:.75}
+.cat-pill.nov{color:var(--nov);border-color:var(--nov);background:#1a1030}
+.cat-pill.int{color:var(--int);border-color:var(--int);background:#0d1e30}
+.cat-pill.sup{color:var(--sup);border-color:var(--sup);background:#1e1500}
+.hstats{display:flex;gap:1.1rem;margin-left:auto;font-family:var(--mono);font-size:11px}
+.hs{display:flex;flex-direction:column;align-items:center}
+.hsn{font-size:16px;font-weight:700;color:var(--tx)}
+.hsn.g{color:var(--ok)}
+.hsl{color:var(--tx3);font-size:9px;letter-spacing:.08em}
+
+/* ── MAIN ── */
+main{max-width:720px;margin:0 auto;padding:1.25rem 1rem 4rem}
+
+/* ── PROGRESS ── */
+.prog-wrap{margin-bottom:1.1rem}
+.prog-track{height:3px;background:var(--sur2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease;width:0%}
+.prog-lbl{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:4px;display:flex;justify-content:space-between}
+
+/* ── NAV CAPÍTULOS ── */
+.nav-section{margin-bottom:1.1rem}
+.nav-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--tx3);margin-bottom:6px}
+.cap-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px}
+.cap-btn{
+  font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:var(--r);
+  border:1px solid var(--bdr);background:transparent;color:var(--tx2);
+  cursor:pointer;transition:all .15s;letter-spacing:.02em;
+}
+.cap-btn:hover{border-color:var(--tx2);color:var(--tx)}
+.cap-btn.active{background:var(--acc);border-color:var(--acc);color:#0d1117;font-weight:700}
+.cap-btn:disabled{opacity:.3;cursor:not-allowed;border-color:var(--bdr);color:var(--tx3)}
+.sec-row{display:flex;flex-wrap:wrap;gap:5px;min-height:0}
+.sec-btn{
+  font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;
+  border:1px solid var(--bdr);background:transparent;color:var(--tx3);
+  cursor:pointer;transition:all .15s;
+}
+.sec-btn:hover{border-color:var(--acc2);color:var(--acc2)}
+.sec-btn.active{background:var(--acc2);border-color:var(--acc2);color:#0d1117;font-weight:700}
+.sec-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ── QUESTION CARD ── */
+.qcard{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.35rem;margin-bottom:1rem;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.qtags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.85rem}
+.qtag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;letter-spacing:.03em}
+.tag-cap{background:#1c2a3a;color:var(--acc2);border:1px solid #2d4a6e}
+.tag-sec{background:#1a1f0e;color:#8bc34a;border:1px solid #3a4e18}
+.qtext{font-size:15px;color:var(--tx);line-height:1.75;margin-bottom:1rem}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{
+  background:var(--sur2);border:1px solid var(--bdr);border-radius:var(--r);
+  padding:11px 14px;text-align:left;color:var(--tx);font-family:var(--sans);
+  font-size:14px;cursor:pointer;transition:all .15s;line-height:1.5;
+}
+.opt::before{content:attr(data-l);font-family:var(--mono);font-size:11px;color:var(--tx3);margin-right:9px;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--acc);background:#1a1f2e}
+.opt:disabled{cursor:default}
+.opt.correct{background:#0d2818;border-color:var(--ok);color:var(--ok)}
+.opt.correct::before{color:var(--ok)}
+.opt.wrong{background:#2c0d0d;border-color:var(--err);color:var(--err)}
+.opt.wrong::before{color:var(--err)}
+.feedback{
+  margin-top:.85rem;padding:13px 15px;border-radius:var(--r);
+  font-size:13.5px;line-height:1.7;display:none;animation:fi .2s ease;
+}
+.feedback.correct{background:#0d2818;border:1px solid #1e4d2e;color:#7ee89b}
+.feedback.wrong{background:#2c0d0d;border:1px solid #5a1a1a;color:#f09090}
+.feedback strong{font-weight:600;display:block;margin-bottom:3px}
+.btn-next{
+  margin-top:.85rem;padding:10px 22px;background:var(--acc);color:#0d1117;
+  border:none;border-radius:var(--r);font-family:var(--mono);font-size:12px;
+  font-weight:700;cursor:pointer;display:none;transition:opacity .15s;letter-spacing:.03em;
+}
+.btn-next:hover{opacity:.85}
+
+/* ── EMPTY / FINAL ── */
+.empty{display:none;text-align:center;padding:3rem 1rem;color:var(--tx3);font-family:var(--mono);font-size:12px}
+.final{display:none;text-align:center;padding:3rem 1rem;animation:fi .3s ease}
+.final-ring{
+  width:110px;height:110px;border-radius:50%;border:3px solid var(--acc);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.25rem;font-family:var(--mono);font-size:28px;font-weight:700;color:var(--acc);
+}
+.final-t{font-family:var(--mono);font-size:16px;color:var(--tx);margin-bottom:.4rem}
+.final-s{color:var(--tx2);font-size:13px;margin-bottom:1.75rem}
+.final-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-rst{
+  padding:11px 22px;background:transparent;border:1px solid var(--acc);
+  color:var(--acc);border-radius:var(--r);font-family:var(--mono);font-size:12px;
+  font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .15s;
+}
+.btn-rst:hover{background:var(--acc);color:#0d1117}
+.btn-change{
+  padding:11px 22px;background:transparent;border:1px solid var(--bdr);
+  color:var(--tx2);border-radius:var(--r);font-family:var(--mono);font-size:12px;
+  cursor:pointer;letter-spacing:.04em;transition:all .15s;
+}
+.btn-change:hover{border-color:var(--tx2);color:var(--tx)}
+
+@media(max-width:480px){
+  .w-title{font-size:22px}
+  .w-cards{grid-template-columns:1fr}
+  header{padding:.65rem 1rem}
+  .logo{font-size:10px}
+  .hsn{font-size:14px}
+  .qtext{font-size:14px}
+  .opt{font-size:13px;padding:10px 12px}
+  .hstats{gap:.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PANTALLA DE BIENVENIDA ══════════════════════════════════════════════ -->
+<div id="welcome">
+  <span class="w-badge">TI ▶ COSTA RICA</span>
+  <h1 class="w-title">Simulador de Examen<br>Radioaficionado</h1>
+  <p class="w-sub">Basado en el Manual del Radioaficionado de Costa Rica v3.0 y el temario oficial de la SUTEL. Selecciona la categoría que deseas obtener:</p>
+
+  <div class="w-cards">
+    <div class="cat-card nov" onclick="selectCat('nov')">
+      <div class="cat-dot"></div>
+      <div class="cat-name">NOVICIO</div>
+      <div class="cat-desc">Primera licencia de radioaficionado. Operación básica en VHF/UHF.</div>
+      <div class="cat-secs">Cap 1–3 completos · Cap 4 (4.1–4.5) · Cap 5 (5.1–5.2)</div>
+    </div>
+    <div class="cat-card int" onclick="selectCat('int')">
+      <div class="cat-dot"></div>
+      <div class="cat-name">INTERMEDIO</div>
+      <div class="cat-desc">Acceso a HF y mayor potencia. Requiere conocimientos técnicos más amplios.</div>
+      <div class="cat-secs">Cap 1–3 · Cap 4 (4.1–4.8) · Cap 5–8 completos</div>
+    </div>
+    <div class="cat-card sup" onclick="selectCat('sup')">
+      <div class="cat-dot"></div>
+      <div class="cat-name">SUPERIOR</div>
+      <div class="cat-desc">Máxima categoría. Todos los privilegios de frecuencia y potencia.</div>
+      <div class="cat-secs">Capítulos 1–8 completos (todas las secciones)</div>
+    </div>
+  </div>
+
+  <p class="w-hint">Nota: la calificación mínima para aprobar el examen de la SUTEL es 70%</p>
+  <button class="btn-start" id="btn-start" onclick="startQuiz()">Comenzar práctica →</button>
+</div>
+
+<!-- ══ SIMULADOR ════════════════════════════════════════════════════════════ -->
+<div id="app" style="display:none">
+  <header>
+    <div class="logo">TI&#9654; <span>Simulador · CR</span></div>
+    <span class="cat-pill" id="hdr-pill" onclick="goWelcome()"></span>
+    <div class="hstats">
+      <div class="hs"><span class="hsn" id="s-t">0</span><span class="hsl">TOTAL</span></div>
+      <div class="hs"><span class="hsn g" id="s-c">0</span><span class="hsl">CORRECTAS</span></div>
+      <div class="hs"><span class="hsn" id="s-p">—</span><span class="hsl">PROMEDIO</span></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+      <div class="prog-lbl"><span id="plbl"></span><span id="pcnt"></span></div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-title">FILTRAR POR CAPÍTULO — Manual del Radioaficionado CR v3.0</div>
+      <div class="cap-row" id="cap-row"></div>
+      <div class="sec-row" id="sec-row"></div>
+    </div>
+
+    <div class="qcard" id="qcard" style="display:none">
+      <div class="qtags" id="qtags"></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="opts" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Siguiente →</button>
+    </div>
+    <div class="empty" id="empty">Sin preguntas para este filtro en la categoría seleccionada.</div>
+    <div class="final" id="final">
+      <div class="final-ring" id="fscore"></div>
+      <div class="final-t" id="ftitle"></div>
+      <div class="final-s" id="fsub"></div>
+      <div class="final-btns">
+        <button class="btn-rst" onclick="restart()">↺ Reiniciar</button>
+        <button class="btn-change" onclick="goWelcome()">⇄ Cambiar categoría</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── ESTRUCTURA DEL MANUAL CR v3.0 ───────────────────────────────────────────
+const CHAPTERS = [
+  {id:"ALL", label:"Todos"},
+  {id:"C1",  label:"Cap 1 · Introducción"},
+  {id:"C2",  label:"Cap 2 · Fundamentos de Radio"},
+  {id:"C3",  label:"Cap 3 · Procedimientos Operativos"},
+  {id:"C4",  label:"Cap 4 · Electricidad y Circuitos"},
+  {id:"C5",  label:"Cap 5 · Propagación y Antenas"},
+  {id:"C6",  label:"Cap 6 · Equipos"},
+  {id:"C7",  label:"Cap 7 · Métodos de Comunicación"},
+  {id:"C8",  label:"Cap 8 · Seguridad"},
+];
+
+const SECTIONS = {
+  C1:["C1.1|La radioafición","C1.2|Actividades de los radioaficionados","C1.3|Código del radioaficionado","C1.4|Regulación en Costa Rica"],
+  C2:["C2.1|Señales y Ondas de Radio","C2.2|Fundamentos del Equipamiento"],
+  C3:["C3.1|Técnicas de operación HF","C3.2|Operación en Emergencias","C3.3|Operación General","C3.4|Satélites de Radioaficionados"],
+  C4:["C4.1|Electricidad","C4.2|Componentes y Unidades","C4.3|Principios de Circuitos","C4.4|Circuitos de Radio","C4.5|Equipo Básico de Prueba","C4.6|Matemática de Radio","C4.8|Amplificadores","C4.9|Procesamiento de Señales"],
+  C5:["C5.1|Propagación","C5.2|Conceptos básicos de antenas"],
+  C6:["C6.1|Bloques fundamentales","C6.2|Transmisores y Receptores","C6.3|Amplificadores","C6.4|Conectores","C6.5|Fuentes de Energía","C6.7|Mediciones de Radio"],
+  C7:["C7.1|Hacer contactos","C7.2|Uso de repetidores","C7.3|Redes","C7.4|Comunicaciones servicio público","C7.5|Operación por satélite","C7.7|Modulación","C7.8|Modos Digitales"],
+  C8:["C8.1|Seguridad Eléctrica","C8.2|Interferencia RF","C8.3|Exposición RF","C8.4|Seguridad Mecánica y Exterior"],
+};
+
+// ─── TABLA SUTEL: secciones habilitadas por categoría ────────────────────────
+// nov = Novicio, int = Intermedio, sup = Superior
+// Cap 4: nov=4.1-4.5, int=4.1-4.8, sup=todas
+// Cap 5: nov=5.1-5.2, int=todas, sup=todas
+// Cap 6,7,8: nov=ninguna, int=todas, sup=todas
+const CAT_RULES = {
+  nov: {
+    C1:"all", C2:"all", C3:"all",
+    C4:["C4.1","C4.2","C4.3","C4.4","C4.5"],
+    C5:["C5.1","C5.2"],
+    C6:[], C7:[], C8:[],
+  },
+  int: {
+    C1:"all", C2:"all", C3:"all",
+    C4:["C4.1","C4.2","C4.3","C4.4","C4.5","C4.6","C4.8","C4.9"],
+    C5:"all", C6:"all", C7:"all", C8:"all",
+  },
+  sup: {
+    C1:"all", C2:"all", C3:"all",
+    C4:"all", C5:"all", C6:"all", C7:"all", C8:"all",
+  },
+};
+
+const CAT_META = {
+  nov:{label:"NOVICIO",   cls:"nov"},
+  int:{label:"INTERMEDIO",cls:"int"},
+  sup:{label:"SUPERIOR",  cls:"sup"},
+};
+
+// ─── BANCO DE PREGUNTAS ───────────────────────────────────────────────────────
+// sec: sección exacta (C4.1, C5.2, etc.) para aplicar filtros SUTEL
+const Q = [
+
+// ══ CAP 1 ══
+{cap:"C1",sec:"C1.1",secN:"La radioafición",
+ q:"¿Por qué se llama 'radioafición' al servicio de radioaficionados?",
+ opts:["Porque los equipos son de aficionados, no profesionales","Porque sus practicantes lo realizan por afición y sin fines de lucro","Porque el servicio no tiene regulación","Porque solo pueden usarlo personas sin empleo formal"],
+ ans:1,exp:"La radioafición es practicada por personas que la realizan por vocación y entretenimiento, sin cobrar por sus comunicaciones ni perseguir beneficio económico."},
+
+{cap:"C1",sec:"C1.1",secN:"La radioafición",
+ q:"¿Cuál fue una contribución histórica de los radioaficionados costarricenses?",
+ opts:["Desarrollaron el primer satélite centroamericano","Introdujeron la radiotelegrafía en Costa Rica a principios del siglo XX","Crearon el protocolo TCP/IP","Construyeron la primera planta eléctrica del país"],
+ ans:1,exp:"Los radioaficionados jugaron un papel clave en la introducción y desarrollo de las telecomunicaciones en Costa Rica desde los primeros años de la radiotelegrafía."},
+
+{cap:"C1",sec:"C1.2",secN:"Actividades de los radioaficionados",
+ q:"¿Con qué prefijo se identifican las estaciones de radioaficionados de Costa Rica?",
+ opts:["TI","XE","HP","OA"],
+ ans:0,exp:"La UIT asignó el prefijo TI a Costa Rica. El número que sigue indica la zona geográfica: TI2=Valle Central, TI5=San José, etc."},
+
+{cap:"C1",sec:"C1.2",secN:"Actividades de los radioaficionados",
+ q:"¿Qué es el intercambio de tarjetas QSL entre radioaficionados?",
+ opts:["Un sistema de pago por uso de frecuencias","La confirmación formal de un contacto entre dos estaciones","Un tipo de modulación de señal","Un protocolo de red digital"],
+ ans:1,exp:"Las tarjetas QSL (físicas o electrónicas) confirman que dos estaciones realizaron un contacto. Son muy valoradas en DXing y para obtener diplomas internacionales."},
+
+{cap:"C1",sec:"C1.3",secN:"Código del radioaficionado",
+ q:"¿Cuál de los siguientes es un principio del Código del Radioaficionado?",
+ opts:["Es leal: actúa solo con su club","Es patriótico: solo se comunica con estaciones de su país","Es considerado: nunca opera en detrimento de otros","Es confidencial: mantiene en secreto sus comunicaciones"],
+ ans:2,exp:"El radioaficionado es considerado: jamás opera deliberadamente en detrimento del placer de otros. La consideración hacia los demás operadores es un valor central de la radioafición."},
+
+{cap:"C1",sec:"C1.4",secN:"Regulación en Costa Rica",
+ q:"¿Cuál es el ente regulador de las telecomunicaciones en Costa Rica?",
+ opts:["ARRL","ARESOL","SUTEL","MICITT"],
+ ans:2,exp:"La SUTEL (Superintendencia de Telecomunicaciones) regula y fiscaliza las telecomunicaciones en Costa Rica, incluyendo la asignación de licencias y frecuencias a radioaficionados."},
+
+{cap:"C1",sec:"C1.4",secN:"Regulación en Costa Rica",
+ q:"¿Cuál es la nota mínima para aprobar el examen teórico de radioaficionado ante la SUTEL?",
+ opts:["60%","65%","70%","75%"],
+ ans:2,exp:"Según la normativa de la SUTEL, la calificación mínima para aprobar cualquier examen teórico de radioaficionado (Novicio, Intermedio o Superior) es de 70%."},
+
+{cap:"C1",sec:"C1.4",secN:"Regulación en Costa Rica",
+ q:"¿Cuál liga es la principal organización de radioaficionados de Costa Rica, afiliada a la IARU?",
+ opts:["ARRL","IARU Región 2","Radio Club de Costa Rica (RCCR)","COSPAS-SARSAT"],
+ ans:2,exp:"El Radio Club de Costa Rica (RCCR), fundado en 1931, es la organización nacional de radioaficionados y representante de Costa Rica ante la IARU (Unión Internacional de Radioaficionados)."},
+
+// ══ CAP 2 ══
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Cuál es la unidad de medida de la frecuencia?",
+ opts:["Voltio (V)","Hercio (Hz)","Amperio (A)","Metro (m)"],
+ ans:1,exp:"La frecuencia se mide en Hercios (Hz). 1 Hz = 1 ciclo por segundo. En radioafición se usan kHz, MHz y GHz."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Cuántos kilohercios (kHz) hay en 1 megahercio (MHz)?",
+ opts:["10","100","1000","10 000"],
+ ans:2,exp:"1 MHz = 1000 kHz. El prefijo 'mega' equivale a ×10⁶ y 'kilo' a ×10³."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Cuál es la fórmula para calcular la longitud de onda en metros?",
+ opts:["λ = f × 300","λ = f / 300","λ = 300 / f(MHz)","λ = 300 × f(MHz)"],
+ ans:2,exp:"λ(m) = 300 / f(MHz). Ejemplo: 146 MHz → λ = 300/146 ≈ 2.05 m (banda de 2 metros)."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿A qué velocidad viajan las ondas de radio en el espacio libre?",
+ opts:["340 m/s","150 000 km/s","300 000 km/s","600 000 km/s"],
+ ans:2,exp:"Las ondas de radio son ondas electromagnéticas y viajan en el vacío a la velocidad de la luz: ~300 000 km/s (3×10⁸ m/s)."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Qué rango de frecuencias corresponde a HF (ondas decamétricas)?",
+ opts:["300 kHz a 3 MHz","3 MHz a 30 MHz","30 MHz a 300 MHz","300 MHz a 3 GHz"],
+ ans:1,exp:"HF (High Frequency): 3 a 30 MHz. Es la región donde ocurre la propagación ionosférica de larga distancia."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Qué rango de frecuencias corresponde a VHF?",
+ opts:["300 kHz a 3 MHz","3 MHz a 30 MHz","30 MHz a 300 MHz","300 MHz a 3 GHz"],
+ ans:2,exp:"VHF (Very High Frequency): 30 a 300 MHz. Incluye la banda de 6 m (50 MHz) y 2 m (144 MHz)."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Qué rango de frecuencias corresponde a UHF?",
+ opts:["3 a 30 MHz","30 a 300 MHz","300 MHz a 3 GHz","3 GHz a 30 GHz"],
+ ans:2,exp:"UHF (Ultra High Frequency): 300 MHz a 3 GHz. La banda de 70 cm (430-440 MHz) está en UHF."},
+
+{cap:"C2",sec:"C2.1",secN:"Señales y Ondas de Radio",
+ q:"¿Qué son las Radiaciones No Ionizantes (RNI)?",
+ opts:["Radiación con energía suficiente para ionizar átomos y romper ADN","Radiación electromagnética sin suficiente energía para ionizar materia","Radiación producida solo por transmisores de alta potencia","Radiación que solo existe por encima de 300 GHz"],
+ ans:1,exp:"Las ondas de radio son RNI: no tienen suficiente energía para ionizar átomos ni dañar ADN, a diferencia de rayos X o gamma. Sus efectos son principalmente térmicos."},
+
+{cap:"C2",sec:"C2.2",secN:"Fundamentos del Equipamiento",
+ q:"¿Cuáles son los componentes básicos de una estación de radioaficionados?",
+ opts:["Solo el transceptor y la antena","Transceptor, línea de alimentación, antena y fuente de poder","Solo el micrófono y los parlantes","El modem, el router y la computadora"],
+ ans:1,exp:"Una estación básica incluye: transceptor (combina transmisor y receptor), línea de alimentación coaxial, antena y fuente de poder."},
+
+{cap:"C2",sec:"C2.2",secN:"Fundamentos del Equipamiento",
+ q:"¿Qué función cumple un repetidor en radioafición?",
+ opts:["Amplifica pasivamente la señal sin retransmitir","Recibe en una frecuencia y retransmite simultáneamente en otra frecuencia diferente","Convierte señales analógicas en digitales","Mide la potencia de salida del transmisor"],
+ ans:1,exp:"El repetidor recibe en su frecuencia de entrada y retransmite en su frecuencia de salida simultáneamente, extendiendo el alcance de equipos portátiles y móviles de baja potencia."},
+
+// ══ CAP 3 ══
+{cap:"C3",sec:"C3.1",secN:"Técnicas de operación HF",
+ q:"¿Cómo se verifica que una frecuencia HF está disponible antes de transmitir?",
+ opts:["Transmitiendo directamente y esperando quejas","Escuchando un minuto y preguntando '¿Está la frecuencia en uso?' (QRL?)","Verificando en internet si alguien la usa","La frecuencia siempre está disponible si no escuchas nada"],
+ ans:1,exp:"La buena práctica es escuchar la frecuencia y preguntar QRL? antes de transmitir, para no interferir con comunicaciones en curso que quizás no se escuchan localmente."},
+
+{cap:"C3",sec:"C3.1",secN:"Técnicas de operación HF",
+ q:"¿Qué significa 'CQ' en procedimientos de radioaficionados?",
+ opts:["Solicitud de identificación de señal de llamada","Llamada general a cualquier estación","Calidad de comunicación excelente","Solo lo usan estaciones de emergencia"],
+ ans:1,exp:"CQ es la llamada general que indica 'llamo a cualquier estación'. Es la forma estándar de iniciar contacto cuando no se busca una estación en particular."},
+
+{cap:"C3",sec:"C3.1",secN:"Técnicas de operación HF",
+ q:"¿Qué significa el reporte RST en radioafición?",
+ opts:["Radio Signal Tracker: sistema de seguimiento","Readability-Strength-Tone: legibilidad, fuerza y tono de la señal","Remote Station Terminal: terminal remota","Reception Status Test: prueba de recepción"],
+ ans:1,exp:"RST: R=Readability/Legibilidad (1-5), S=Signal Strength/Fuerza (1-9), T=Tone/Tono CW (1-9). Un reporte 59 significa señal perfectamente legible y muy fuerte."},
+
+{cap:"C3",sec:"C3.1",secN:"Técnicas de operación HF",
+ q:"¿Cuál es la convención de uso de USB vs LSB en las bandas HF?",
+ opts:["USB en todas las bandas HF, LSB en VHF/UHF","LSB en bandas por debajo de 10 MHz; USB en bandas de 10 MHz en adelante y en VHF/UHF","LSB en comunicaciones locales, USB en DX","No existe convención, cada operador elige"],
+ ans:1,exp:"Por convención internacional: LSB en 160m, 80m, 40m (bajo 10 MHz). USB en 20m, 17m, 15m, 12m, 10m y en VHF/UHF. No es regla técnica pero es práctica universal."},
+
+{cap:"C3",sec:"C3.2",secN:"Operación en Emergencias",
+ q:"¿Qué es ARESOL en Costa Rica?",
+ opts:["Una red de modos digitales para radioaficionados","La red de radioaficionados voluntarios para emergencias y servicio público en Costa Rica","Un sistema de repetidores enlazados por internet","Un tipo de licencia especial para emergencias"],
+ ans:1,exp:"ARESOL es la red de radioaficionados voluntarios en Costa Rica que apoya comunicaciones en emergencias y desastres naturales, coordinando con las autoridades civiles."},
+
+{cap:"C3",sec:"C3.2",secN:"Operación en Emergencias",
+ q:"Durante una emergencia con peligro inmediato para la vida, ¿puede un radioaficionado transmitir en frecuencias normalmente restringidas?",
+ opts:["No, las restricciones siempre aplican sin excepción","Sí, puede usar cualquier frecuencia necesaria para salvar vidas, reportándolo posteriormente","Solo si la SUTEL lo autoriza en ese momento","Solo en bandas de VHF, nunca en HF"],
+ ans:1,exp:"Cuando existe peligro inmediato para la vida o la propiedad, el operador puede usar cualquier medio a su disposición para obtener ayuda. Las restricciones normales ceden ante una emergencia real."},
+
+{cap:"C3",sec:"C3.3",secN:"Operación General",
+ q:"¿Qué es DXing en radioafición?",
+ opts:["Usar equipos digitales experimentales","Intentar realizar contactos con estaciones muy distantes o de países difíciles de alcanzar","Operar exclusivamente en modos digitales","Participar en concursos locales de radio"],
+ ans:1,exp:"DXing es la actividad de buscar contactos con estaciones lejanas. 'DX' viene de 'distance'. Es uno de los pasatiempos más populares en radioafición HF."},
+
+{cap:"C3",sec:"C3.4",secN:"Satélites de Radioaficionados",
+ q:"¿Qué es una órbita LEO?",
+ opts:["Long Extended Orbit: órbita de larga duración","Low Earth Orbit: órbita terrestre baja (200-2000 km), con período de ~90-120 minutos","Lateral Equatorial Orbit: órbita ecuatorial lateral","Low Energy Orbit: órbita de mínima energía"],
+ ans:1,exp:"LEO (Low Earth Orbit) son satélites a 200-2000 km de altitud. Los satélites OSCAR/AMSAT están principalmente en LEO y pasan por el horizonte de una estación varias veces al día."},
+
+{cap:"C3",sec:"C3.4",secN:"Satélites de Radioaficionados",
+ q:"¿Qué es el efecto Doppler en comunicaciones vía satélite?",
+ opts:["El desgaste de la batería del satélite durante la noche","El cambio aparente en la frecuencia de la señal del satélite por el movimiento relativo entre el satélite y la estación terrestre","La pérdida de señal cuando el satélite está en el horizonte","La rotación de la polarización de la antena del satélite"],
+ ans:1,exp:"Cuando el satélite se acerca la frecuencia percibida sube; cuando se aleja baja. El operador debe compensar este desplazamiento Doppler ajustando la frecuencia del transceptor durante el pase."},
+
+// ══ CAP 4 ══
+{cap:"C4",sec:"C4.1",secN:"Electricidad",
+ q:"¿Qué describe la Ley de Ohm?",
+ opts:["La relación entre potencia y temperatura en un resistor","La relación entre voltaje (E), corriente (I) y resistencia (R): E = I × R","La relación entre frecuencia y longitud de onda","La relación entre capacitancia e inductancia en resonancia"],
+ ans:1,exp:"La Ley de Ohm: E = I × R. De aquí: I = E/R y R = E/I. Es la ley fundamental de los circuitos eléctricos."},
+
+{cap:"C4",sec:"C4.1",secN:"Electricidad",
+ q:"¿Cuántos ohmios de resistencia tiene un circuito donde fluyen 3 amperios con 90 voltios?",
+ opts:["3 Ω","30 Ω","270 Ω","0.033 Ω"],
+ ans:1,exp:"R = E/I = 90V / 3A = 30 Ω."},
+
+{cap:"C4",sec:"C4.1",secN:"Electricidad",
+ q:"¿Cuál es la fórmula para calcular la potencia eléctrica en un circuito de CC?",
+ opts:["P = E / I","P = I × R","P = I × E","P = E / R"],
+ ans:2,exp:"P = I × E. También P = I²×R y P = E²/R. Ejemplo: 2A × 13.8V = 27.6 W."},
+
+{cap:"C4",sec:"C4.1",secN:"Electricidad",
+ q:"¿Cuántos dB representa un aumento de potencia de 5 a 10 vatios?",
+ opts:["2 dB","3 dB","5 dB","10 dB"],
+ ans:1,exp:"Duplicar la potencia = +3 dB siempre. De 5W a 10W es ×2, por tanto +3 dB. ×10 = +10 dB, /2 = -3 dB."},
+
+{cap:"C4",sec:"C4.1",secN:"Electricidad",
+ q:"¿Cuál es la diferencia entre corriente directa (CD) y corriente alterna (CA)?",
+ opts:["La CD es más peligrosa","La CD fluye siempre en la misma dirección; la CA cambia de dirección periódicamente","La CD solo existe en baterías; la CA solo en generadores","No hay diferencia práctica"],
+ ans:1,exp:"CD: fluye en un solo sentido (baterías, fuentes reguladas). CA: invierte dirección periódicamente (red eléctrica, 60 Hz en Costa Rica)."},
+
+{cap:"C4",sec:"C4.2",secN:"Componentes y Unidades",
+ q:"¿Qué componente almacena energía en un campo eléctrico?",
+ opts:["Resistor","Inductor","Capacitor","Diodo"],
+ ans:2,exp:"El capacitor almacena energía en el campo eléctrico entre dos placas conductoras separadas por un dieléctrico. Su unidad es el Farad (F)."},
+
+{cap:"C4",sec:"C4.2",secN:"Componentes y Unidades",
+ q:"¿Qué componente almacena energía en un campo magnético?",
+ opts:["Resistor","Capacitor","Inductor (bobina)","Transistor"],
+ ans:2,exp:"El inductor (bobina) almacena energía en el campo magnético generado por el flujo de corriente. Su unidad es el Henry (H)."},
+
+{cap:"C4",sec:"C4.2",secN:"Componentes y Unidades",
+ q:"En un circuito serie, ¿cómo se calcula la resistencia total?",
+ opts:["Se divide entre el número de resistores","Se suman todas las resistencias","Se calcula el inverso de la suma de los inversos","Es igual a la resistencia más grande"],
+ ans:1,exp:"En serie: R_total = R1 + R2 + R3... Las resistencias se suman. En paralelo: 1/R_total = 1/R1 + 1/R2 + 1/R3..."},
+
+{cap:"C4",sec:"C4.2",secN:"Componentes y Unidades",
+ q:"¿Cuál es la función de un diodo semiconductor?",
+ opts:["Almacenar energía en campo magnético","Permitir el flujo de corriente en una sola dirección","Amplificar señales de RF","Regular el voltaje de salida"],
+ ans:1,exp:"El diodo conduce de ánodo a cátodo (polarización directa) y bloquea en sentido inverso. Se usa en rectificadores, detectores y protección de circuitos."},
+
+{cap:"C4",sec:"C4.2",secN:"Componentes y Unidades",
+ q:"¿Qué es la impedancia en un circuito de CA?",
+ opts:["Solo la resistencia del circuito","La oposición total al flujo de CA, combinando resistencia y reactancia","Solo la capacitancia total","La tensión dividida entre la corriente en CD"],
+ ans:1,exp:"La impedancia (Z, en Ω) combina resistencia (R) y reactancia (X): Z = √(R² + X²). Es el equivalente de la resistencia para circuitos de corriente alterna."},
+
+{cap:"C4",sec:"C4.3",secN:"Principios de Circuitos",
+ q:"¿Qué es un circuito resonante?",
+ opts:["Un circuito que solo funciona a 50 Ω","Un circuito LC que resuena a la frecuencia donde X_L = X_C","Un circuito que siempre tiene ROE 1:1","Un circuito que detecta solo señales AM"],
+ ans:1,exp:"En resonancia X_L = X_C. La frecuencia de resonancia es f = 1/(2π√LC). Se usa en filtros sintonizados de receptores y transmisores."},
+
+{cap:"C4",sec:"C4.3",secN:"Principios de Circuitos",
+ q:"¿Qué es la reactancia capacitiva (Xc)?",
+ opts:["La resistencia de un capacitor en CC","La oposición de un capacitor al flujo de CA, que disminuye al aumentar la frecuencia","La energía almacenada en el campo eléctrico del capacitor","La tensión máxima que soporta un capacitor"],
+ ans:1,exp:"Xc = 1/(2πfC). A mayor frecuencia, menor reactancia capacitiva (el capacitor 'deja pasar' mejor las señales de alta frecuencia). A frecuencia cero (CC), Xc es infinita."},
+
+{cap:"C4",sec:"C4.4",secN:"Circuitos de Radio",
+ q:"¿Cuál es la función de un oscilador en un transceptor?",
+ opts:["Rectificar la CA de la red","Generar una señal a una frecuencia específica y estable","Amplificar la señal de antena","Demodular la señal recibida"],
+ ans:1,exp:"El oscilador genera la señal portadora o la referencia de frecuencia. En transceptores modernos, un VFO o sintetizador de frecuencias controla la frecuencia de operación."},
+
+{cap:"C4",sec:"C4.4",secN:"Circuitos de Radio",
+ q:"¿Qué hace un rectificador en una fuente de poder?",
+ opts:["Convierte CC en CA","Convierte CA en CC para alimentar los circuitos del equipo","Amplifica la corriente de entrada","Regula el voltaje con precisión"],
+ ans:1,exp:"El rectificador (diodos) convierte la CA de la red en CC pulsante. Un filtro de capacitores suaviza la CC resultante para alimentar los circuitos del equipo."},
+
+{cap:"C4",sec:"C4.5",secN:"Equipo Básico de Prueba",
+ q:"¿Cómo se conecta un voltímetro para medir voltaje?",
+ opts:["En serie con el componente","En paralelo con el componente","Con el circuito apagado solamente","Entre el positivo de la fuente y tierra"],
+ ans:1,exp:"El voltímetro mide diferencia de potencial y se conecta en PARALELO con el componente. El amperímetro mide corriente y va en SERIE."},
+
+{cap:"C4",sec:"C4.5",secN:"Equipo Básico de Prueba",
+ q:"¿Cuál es el propósito de una carga ficticia (dummy load)?",
+ opts:["Mejorar la eficiencia de la antena","Permitir probar el transmisor sin irradiar señal al aire","Medir la impedancia de la línea de alimentación","Sintonizar automáticamente la antena"],
+ ans:1,exp:"La carga ficticia absorbe la potencia del transmisor (típicamente 50 Ω no inductiva) sin irradiar, permitiendo ajustes y pruebas sin interferir a otras estaciones."},
+
+{cap:"C4",sec:"C4.5",secN:"Equipo Básico de Prueba",
+ q:"¿Qué tipo de soldadura NO se debe usar en electrónica de radioaficionados?",
+ opts:["Soldadura con núcleo de resina (rosin-core)","Soldadura con núcleo de ácido (acid-core)","Soldadura plomo-estaño (60/40)","Soldadura sin plomo (lead-free)"],
+ ans:1,exp:"La soldadura con núcleo de ácido es corrosiva y ataca componentes y pistas con el tiempo. En electrónica solo se usa soldadura con núcleo de resina (rosin-core)."},
+
+{cap:"C4",sec:"C4.6",secN:"Matemática de Radio",
+ q:"¿Cuál es el resultado en dB de un aumento de potencia de 20 a 200 vatios?",
+ opts:["3 dB","6 dB","10 dB","20 dB"],
+ ans:2,exp:"200W / 20W = ×10 = +10 dB. Regla: ×2 = +3 dB, ×4 = +6 dB, ×8 = +9 dB, ×10 = +10 dB."},
+
+{cap:"C4",sec:"C4.8",secN:"Amplificadores",
+ q:"¿Qué describe la ganancia de un amplificador?",
+ opts:["La diferencia de temperatura entre entrada y salida","La relación entre la señal de salida y la de entrada (potencia, voltaje o corriente)","El consumo de corriente del amplificador","La impedancia de salida del amplificador"],
+ ans:1,exp:"La ganancia es la relación salida/entrada. Ganancia de +10 dB en potencia significa que la salida es 10 veces más potente que la entrada."},
+
+{cap:"C4",sec:"C4.9",secN:"Procesamiento de Señales",
+ q:"¿Qué es la modulación en una señal de radio?",
+ opts:["El proceso de filtrar frecuencias no deseadas","El proceso de combinar la información con la portadora RF para su transmisión","El proceso de amplificar la señal antes de la antena","El proceso de convertir CC en CA en el transmisor"],
+ ans:1,exp:"La modulación imprime la información sobre la portadora RF. Tipos principales: AM, FM, SSB, CW, modos digitales."},
+
+// ══ CAP 5 ══
+{cap:"C5",sec:"C5.1",secN:"Propagación",
+ q:"¿Cuáles son las principales capas de la ionosfera?",
+ opts:["Capa de ozono (O3): refleja todas las señales","Capas D, E y F: la D absorbe HF de día; E y F reflejan HF permitiendo larga distancia","Capa de Van Allen: deflecta VHF/UHF","Solo existe una capa homogénea"],
+ ans:1,exp:"Capas ionosféricas: D (60-90 km) absorbe HF de día; E (90-120 km) y F (150-400 km) reflejan señales HF posibilitando el skip de larga distancia."},
+
+{cap:"C5",sec:"C5.1",secN:"Propagación",
+ q:"¿Qué es la propagación ionosférica (skip)?",
+ opts:["La atenuación de señales HF por la ionosfera","La reflexión de ondas HF de vuelta a la Tierra, permitiendo comunicaciones de larga distancia","La absorción total de señales HF durante el día","La propagación de señales HF solo en línea de vista"],
+ ans:1,exp:"El skip ocurre cuando la señal HF sube a la ionosfera y es reflejada a la Tierra a cientos o miles de km. Con múltiples reflexiones tierra-ionosfera se alcanzan distancias intercontinentales."},
+
+{cap:"C5",sec:"C5.1",secN:"Propagación",
+ q:"¿Cómo afecta el ciclo de manchas solares a la propagación HF?",
+ opts:["Mayor actividad solar siempre empeora la propagación","En el máximo solar la ionosfera se ioniza más, mejorando propagación en bandas altas como 10 y 15 metros","La actividad solar no afecta la propagación HF","Solo afecta frecuencias menores de 3 MHz"],
+ ans:1,exp:"En el máximo solar (~cada 11 años), la ionización aumenta y bandas como 10, 12 y 15 metros permiten comunicaciones intercontinentales con potencias bajas. En el mínimo, las bandas bajas (40, 80m) son más útiles."},
+
+{cap:"C5",sec:"C5.1",secN:"Propagación",
+ q:"¿Qué es el ducto troposférico?",
+ opts:["Un túnel físico para antenas de alta ganancia","Un fenómeno por inversiones de temperatura en la troposfera que permite comunicaciones VHF/UHF mucho más allá del horizonte","La reflexión de VHF en la ionosfera","La propagación por difracción en montañas"],
+ ans:1,exp:"Los ductos troposféricos ocurren cuando capas de temperatura invertida atrapan señales VHF/UHF, permitiendo enlaces de cientos de km que normalmente serían imposibles."},
+
+{cap:"C5",sec:"C5.1",secN:"Propagación",
+ q:"¿Qué es la propagación esporádica E (Es)?",
+ opts:["Propagación en la capa D que afecta AM de onda media","Ionización irregular e intensa de la capa E que permite comunicaciones de 1000-2000 km en VHF","Propagación por satélite en órbita alta","Reflexión de señales en la superficie del océano"],
+ ans:1,exp:"La Es ocurre cuando nubes de alta ionización aparecen en la capa E (90-120 km). Es impredecible pero permite excelentes contactos VHF, especialmente en 6 metros."},
+
+{cap:"C5",sec:"C5.2",secN:"Conceptos básicos de antenas",
+ q:"¿Cómo se describe la polarización de una antena?",
+ opts:["Por la dirección de apuntamiento del reflector","Por la orientación del campo eléctrico de la onda irradiada","Por la orientación del campo magnético","Por la dirección de mayor ganancia"],
+ ans:1,exp:"La polarización se define por la orientación del campo eléctrico. Antena vertical → polarización vertical; horizontal → polarización horizontal."},
+
+{cap:"C5",sec:"C5.2",secN:"Conceptos básicos de antenas",
+ q:"¿Qué es la ganancia de antena?",
+ opts:["La ganancia agrega potencia real al sistema","La ganancia redistribuye la energía concentrándola en direcciones específicas respecto a una antena de referencia","La ganancia solo aplica a antenas de recepción","La ganancia mide la eficiencia eléctrica de la antena"],
+ ans:1,exp:"La ganancia de antena es pasiva: no crea potencia, sino concentra la energía en direcciones específicas. Se expresa en dBi (vs. isótropa) o dBd (vs. dipolo)."},
+
+{cap:"C5",sec:"C5.2",secN:"Conceptos básicos de antenas",
+ q:"¿Cuál es la impedancia característica más común del cable coaxial en radioafición?",
+ opts:["75 Ω","50 Ω","300 Ω","600 Ω"],
+ ans:1,exp:"50 Ω es el estándar en radioafición. Los sistemas de TV usan 75 Ω. La línea de 300 Ω es para alimentación paralela de antenas de TV."},
+
+{cap:"C5",sec:"C5.2",secN:"Conceptos básicos de antenas",
+ q:"¿Qué es la ROE (Relación de Onda Estacionaria) y cuál es el valor ideal?",
+ opts:["Mide la ganancia de la antena; el valor ideal es el más alto posible","Mide la adaptación de impedancia entre línea y antena; el valor ideal es 1:1","Mide la potencia irradiada; el valor ideal es 0","Mide la longitud eléctrica de la antena"],
+ ans:1,exp:"ROE 1:1 = toda la potencia llega a la antena sin reflexiones. ROE alta indica desadaptación y pérdidas. ROE ≤ 2:1 generalmente es aceptable en la práctica."},
+
+{cap:"C5",sec:"C5.2",secN:"Conceptos básicos de antenas",
+ q:"¿Qué ventaja ofrece una antena Yagi sobre un dipolo simple?",
+ opts:["La Yagi es omnidireccional; el dipolo es directivo","La Yagi tiene ganancia direccional, concentrando la energía en una dirección","La Yagi no requiere línea de alimentación","La Yagi funciona en todas las bandas sin sintonizador"],
+ ans:1,exp:"La Yagi usa elementos directores y reflectores para concentrar la radiación en una dirección, logrando ganancia de 6-15 dBd según el número de elementos."},
+
+// ══ CAP 6 ══
+{cap:"C6",sec:"C6.1",secN:"Bloques fundamentales",
+ q:"¿Cuál es la diferencia entre un transmisor y un transceptor?",
+ opts:["Un transmisor puede recibir y transmitir; un transceptor solo transmite","Un transceptor combina transmisor y receptor en una sola unidad","Son términos equivalentes","Un transceptor solo opera en VHF"],
+ ans:1,exp:"El transceptor (TRX) integra transmisor y receptor en una unidad, compartiendo el VFO y los filtros. Es el estándar en equipos modernos de radioafición."},
+
+{cap:"C6",sec:"C6.2",secN:"Transmisores y Receptores",
+ q:"¿Qué es la sensibilidad de un receptor?",
+ opts:["La capacidad de rechazar señales fuera de la banda","La capacidad de detectar señales débiles","La potencia máxima que puede manejar","La velocidad de cambio de frecuencia"],
+ ans:1,exp:"La sensibilidad indica qué tan débil puede ser una señal y aún así ser detectada con calidad aceptable. Se expresa en µV o dBm. Importante para DXing y VHF/UHF."},
+
+{cap:"C6",sec:"C6.2",secN:"Transmisores y Receptores",
+ q:"¿Qué es la selectividad de un receptor?",
+ opts:["La capacidad de detectar señales muy débiles","La capacidad de discriminar entre señales en frecuencias cercanas","La velocidad de respuesta del AGC","La impedancia de entrada del receptor"],
+ ans:1,exp:"La selectividad define qué tan bien el receptor separa la señal deseada de señales adyacentes. Se logra con filtros de IF de ancho de banda apropiado para cada modo."},
+
+{cap:"C6",sec:"C6.4",secN:"Conectores",
+ q:"¿Cuál conector RF es el más común en equipos de radioafición HF y VHF?",
+ opts:["BNC","Tipo N","PL-259 (SO-239)","SMA"],
+ ans:2,exp:"El PL-259/SO-239 es el más común en HF y VHF. Para frecuencias UHF reales (>400 MHz) se prefiere el Tipo N o SMA por menor pérdida."},
+
+{cap:"C6",sec:"C6.5",secN:"Fuentes de Energía",
+ q:"¿Cuál de las siguientes químicas de batería es recargable?",
+ opts:["Carbono-zinc","Alcalina primaria","Litio-ion (Li-ion)","Todas las anteriores"],
+ ans:2,exp:"Li-ion, NiMH y Plomo-ácido son recargables. Las baterías de carbono-zinc y alcalinas primarias NO son recargables; intentar recargarlas puede causar fugas o explosión."},
+
+{cap:"C6",sec:"C6.7",secN:"Mediciones de Radio",
+ q:"¿Qué instrumento se usa para medir la ROE en una línea de transmisión?",
+ opts:["Voltímetro","Wattímetro direccional (medidor de ROE)","Osciloscopio","Multímetro digital"],
+ ans:1,exp:"El wattímetro direccional mide la potencia hacia la antena y la reflejada, calculando la ROE. Es indispensable en toda estación para verificar la adaptación de antena."},
+
+// ══ CAP 7 ══
+{cap:"C7",sec:"C7.1",secN:"Hacer contactos",
+ q:"¿Qué significa el código Q 'QSL'?",
+ opts:["¿Puede comunicarse directamente con...?","Acuso recibo / Confirmo recibo de su transmisión","Cambie a la frecuencia indicada","¿Cuál es su ubicación?"],
+ ans:1,exp:"QSL = 'Confirmo recibo'. Las tarjetas QSL son el método tradicional para confirmar contactos. También existe QSL electrónico (eQSL, LoTW) para diplomas y premios."},
+
+{cap:"C7",sec:"C7.1",secN:"Hacer contactos",
+ q:"¿Qué significan QRM, QRN, QRZ y QSY?",
+ opts:["QRM=cambio de frecuencia, QRN=interferencia, QRZ=llamada general, QSY=ruido","QRM=interferencia de otras estaciones, QRN=ruido atmosférico, QRZ=¿quién me llama?, QSY=cambie de frecuencia","QRM=buena señal, QRN=mala señal, QRZ=fin de contacto, QSY=continúe","Todos significan 'espere un momento'"],
+ ans:1,exp:"QRM=interferencia artificial. QRN=ruido natural/atmosférico. QRZ=¿quién me llama? QSY=cambie a la frecuencia... Estos códigos son internacionales y se usan en todos los idiomas."},
+
+{cap:"C7",sec:"C7.2",secN:"Uso de repetidores",
+ q:"¿Qué es el 'offset' o desplazamiento de un repetidor?",
+ opts:["La diferencia de potencia entre entrada y salida","La diferencia de frecuencia entre la entrada y la salida del repetidor","El retardo de tiempo entre recepción y retransmisión","El nivel de audio de salida"],
+ ans:1,exp:"El offset es la diferencia entre frecuencias de entrada (input) y salida (output) del repetidor. En 2 metros es ±600 kHz; en 70 cm es ±5 MHz."},
+
+{cap:"C7",sec:"C7.2",secN:"Uso de repetidores",
+ q:"¿Qué es CTCSS y para qué se usa en los repetidores?",
+ opts:["Un protocolo digital para repetidores D-STAR","Un tono sub-audible (67-254 Hz) transmitido junto con la voz para activar selectivamente el squelch del repetidor","Un sistema de identificación automática de señal de llamada","Un tipo de modulación para emergencias"],
+ ans:1,exp:"CTCSS usa tonos inaudibles (67-254.1 Hz). El repetidor solo abre si recibe el tono programado, evitando activaciones indeseadas por señales ajenas."},
+
+{cap:"C7",sec:"C7.3",secN:"Redes",
+ q:"¿Cuál es el rol del Net Control en una red de radioaficionados?",
+ opts:["Monitorear las licencias de los participantes","Dirigir el tráfico, llamar la red al orden y coordinar comunicaciones entre estaciones","Transmitir el mayor tiempo posible para mantener la frecuencia","Repetir todos los mensajes para asegurar recepción"],
+ ans:1,exp:"El Net Control llama la red al orden, registra las estaciones que se reportan (check-in), dirige el flujo de tráfico y mensajes, y cierra la red al finalizar."},
+
+{cap:"C7",sec:"C7.4",secN:"Comunicaciones servicio público",
+ q:"¿Cuál es la prioridad máxima en comunicaciones de radioaficionados durante una emergencia?",
+ opts:["Primero la identificación reglamentaria","Las comunicaciones con amenazas inmediatas a la vida o propiedad tienen la máxima prioridad","Primero los mensajes oficiales de la Cruz Roja","La prioridad la establece la SUTEL en tiempo real"],
+ ans:1,exp:"Las comunicaciones de emergencia con peligro inmediato para la vida o propiedad tienen prioridad absoluta sobre cualquier otra comunicación en la frecuencia."},
+
+{cap:"C7",sec:"C7.5",secN:"Operación por satélite",
+ q:"¿Qué indica el modo 'V/U' de un satélite de radioaficionados?",
+ opts:["V=velocidad de bajada, U=velocidad de subida","La primera letra es la banda de subida (uplink) y la segunda la de bajada (downlink). V=VHF, U=UHF","V=número de transponders VHF, U=número UHF","Es el modelo del satélite"],
+ ans:1,exp:"Modo V/U: usuario transmite en VHF (uplink) y recibe en UHF (downlink). El satélite hace la conversión de banda. Otros modos: U/V, L/S, etc."},
+
+{cap:"C7",sec:"C7.7",secN:"Modulación",
+ q:"¿Cuál de estos modos tiene el ancho de banda más angosto?",
+ opts:["FM de voz (±5 kHz)","SSB de voz (~3 kHz)","CW/telegrafía Morse (~150 Hz)","AM de doble banda lateral (~6 kHz)"],
+ ans:2,exp:"CW tiene el ancho de banda más angosto (~150 Hz), lo que le da ventaja en condiciones adversas y permite más estaciones en el espectro disponible."},
+
+{cap:"C7",sec:"C7.7",secN:"Modulación",
+ q:"¿Cuál es el ancho de banda típico de una señal SSB?",
+ opts:["150 Hz","3 kHz","15 kHz","30 kHz"],
+ ans:1,exp:"SSB ocupa ~3 kHz (audio 300-3000 Hz). Es la mitad del ancho de AM de doble banda lateral (~6 kHz), una ventaja clave del SSB."},
+
+{cap:"C7",sec:"C7.7",secN:"Modulación",
+ q:"¿Qué modulación usan los repetidores de voz en VHF/UHF?",
+ opts:["AM","SSB","FM","CW"],
+ ans:2,exp:"Los repetidores de voz VHF/UHF usan FM (Frecuencia Modulada), que ofrece buena calidad de audio e inmunidad al ruido de amplitud."},
+
+{cap:"C7",sec:"C7.8",secN:"Modos Digitales",
+ q:"¿Qué es FT8?",
+ opts:["Un transceptor de 8 bandas","Un modo digital que puede decodificar señales muy por debajo del nivel audible, ideal para propagación marginal","Un protocolo de enlace de repetidores por internet","Un tipo de antena de 8 elementos para VHF"],
+ ans:1,exp:"FT8 fue desarrollado por Joe Taylor K1JT. Decodifica señales hasta 15-20 dB bajo el nivel audible. Cada transmisión dura 15 segundos. Ideal para bandas con propagación marginal."},
+
+{cap:"C7",sec:"C7.8",secN:"Modos Digitales",
+ q:"¿Qué es APRS?",
+ opts:["Un modo de televisión de alta definición","Un sistema digital que transmite posición GPS, mensajes y datos meteorológicos en tiempo real sobre radio","Un protocolo de internet vía radio","Un sistema de codificación de voz digital"],
+ ans:1,exp:"APRS (Automatic Packet Reporting System) combina radio VHF con GPS. Se usa para rastrear vehículos, enviar mensajes cortos y reportar datos meteorológicos en tiempo real."},
+
+{cap:"C7",sec:"C7.8",secN:"Modos Digitales",
+ q:"¿Qué es DMR (Digital Mobile Radio)?",
+ opts:["Una marca de transceptores japoneses","Un estándar digital que permite dos conversaciones simultáneas en un canal de 12.5 kHz mediante multiplexión por tiempo","Un modo de televisión digital de aficionados","Un sistema satelital de comunicaciones digitales"],
+ ans:1,exp:"DMR divide un canal de 12.5 kHz en dos 'time slots', permitiendo dos conversaciones independientes. Se organiza en 'talkgroups' y es muy popular en repetidores digitales modernos."},
+
+// ══ CAP 8 ══
+{cap:"C8",sec:"C8.1",secN:"Seguridad Eléctrica",
+ q:"¿Cuáles son los efectos peligrosos de la corriente eléctrica en el cuerpo humano?",
+ opts:["Solo produce hormigueo sin consecuencias serias","Puede causar quemaduras internas, fibrilación cardíaca, contracciones musculares e incluso la muerte","Solo es peligrosa sobre los 1000 voltios","Solo la CA afecta al cuerpo, no la CD"],
+ ans:1,exp:"Incluso 100 mA pueden ser letales. La corriente causa: quemaduras internas, fibrilación ventricular, tetania muscular (impide soltar el conductor) y daños neurológicos."},
+
+{cap:"C8",sec:"C8.1",secN:"Seguridad Eléctrica",
+ q:"¿Por qué se deben descargar los capacitores antes de trabajar en una fuente apagada?",
+ opts:["Para no dañar el voltímetro al medir","Los capacitores retienen carga peligrosa durante minutos u horas, incluso con el equipo apagado","Solo si el capacitor es mayor de 1000 µF","Los capacitores se descargan automáticamente al apagar"],
+ ans:1,exp:"Los capacitores de filtro en fuentes de alta tensión pueden retener cientos de voltios durante mucho tiempo después de apagado el equipo. Siempre descárguelos con una resistencia antes de tocar el circuito."},
+
+{cap:"C8",sec:"C8.1",secN:"Seguridad Eléctrica",
+ q:"¿Cuál es la función de un fusible en un circuito eléctrico?",
+ opts:["Regular el voltaje de salida","Proteger el circuito cortando la corriente cuando excede el valor nominal, previniendo incendios","Filtrar ruido de RF en la línea de alimentación","Estabilizar la frecuencia de la corriente alterna"],
+ ans:1,exp:"El fusible se funde cuando la corriente excede su valor de diseño, protegiendo el cableado de sobrecalentamiento e incendio. Nunca debe reemplazarse con uno de mayor amperaje."},
+
+{cap:"C8",sec:"C8.2",secN:"Interferencia RF",
+ q:"¿Qué es la interferencia de radiofrecuencia (RFI) y cuáles son sus fuentes comunes?",
+ opts:["RFI son solo señales de estaciones ilegales","RFI es cualquier emisión no deseada que degrada una comunicación; puede originarse en el propio equipo (armónicos) o en fuentes externas (fuentes switching, paneles solares, líneas eléctricas)","RFI solo afecta equipos de TV","RFI solo ocurre en HF"],
+ ans:1,exp:"La RFI puede generarse en el propio transmisor (armónicos, emisiones espurias) o en fuentes externas como fuentes switching, variadores de velocidad, paneles solares o equipos mal apantallados."},
+
+{cap:"C8",sec:"C8.3",secN:"Exposición RF",
+ q:"¿Las señales de radio son radiación ionizante o no ionizante?",
+ opts:["Ionizantes; se requiere blindaje de plomo","No ionizantes: no tienen energía para ionizar átomos ni dañar ADN; los efectos son principalmente térmicos","Ionizantes solo por encima de 1 GHz","Ionizantes solo sobre 1500 W"],
+ ans:1,exp:"Las señales de radio son radiación no ionizante. No causan mutaciones en el ADN. El riesgo es térmico: potencias muy altas o antenas muy cercanas pueden calentar tejidos corporales."},
+
+{cap:"C8",sec:"C8.3",secN:"Exposición RF",
+ q:"¿Qué es el ciclo de trabajo (duty cycle) y por qué importa en la evaluación de exposición RF?",
+ opts:["Es la vida útil del transmisor en horas","Es la fracción de tiempo que se transmite; a mayor ciclo de trabajo mayor es la exposición promedio de RF","Es el porcentaje de tiempo que el equipo está encendido durante el año","Es la relación entre frecuencia de operación y frecuencia de corte del filtro"],
+ ans:1,exp:"El ciclo de trabajo es la fracción de tiempo en transmisión. FM continua=100%, CW≈40%, SSB≈20%. Reducir el ciclo de trabajo permite mayor potencia de pico con la misma exposición promedio."},
+
+{cap:"C8",sec:"C8.4",secN:"Seguridad Mecánica y Exterior",
+ q:"¿Cuál es la regla para la distancia segura entre una antena y las líneas eléctricas?",
+ opts:["Al menos 3 metros de las líneas","La antena debe instalarse de modo que si cae, ninguna parte pueda contactar los cables eléctricos","Las antenas pueden tocar líneas de 120V sin peligro","Solo las antenas metálicas deben alejarse de líneas eléctricas"],
+ ans:1,exp:"La regla fundamental: si la antena o su soporte cae, ninguna parte debe poder contactar los cables eléctricos. El contacto con líneas eléctricas puede ser fatal."},
+
+{cap:"C8",sec:"C8.4",secN:"Seguridad Mecánica y Exterior",
+ q:"¿Cuándo es seguro escalar una torre sin ayudante en tierra?",
+ opts:["Con más de 5 años de experiencia","Nunca. Siempre debe haber al menos un observador en tierra","Si la torre es menor de 6 metros","Si se lleva un teléfono celular"],
+ ans:1,exp:"NUNCA se debe escalar una torre sin un observador en tierra. En caso de accidente, el observador puede llamar a los servicios de emergencia. El equipo de seguridad (arnés, casco) es obligatorio."},
+
+{cap:"C8",sec:"C8.4",secN:"Seguridad Mecánica y Exterior",
+ q:"¿Por qué es importante la puesta a tierra de la estación?",
+ opts:["Solo mejora la señal de antena en HF","Protege contra descargas eléctricas, reduce RFI, mejora el rendimiento de antenas verticales y provee camino seguro para rayos","Es obligatoria solo en estaciones con más de 1500 W","Solo aplica en zonas de alta actividad de rayos"],
+ ans:1,exp:"La tierra correcta: protege al operador de descargas eléctricas, reduce la RFI, mejora el desempeño de antenas verticales y da un camino seguro a tierra para descargas de rayos."},
+
+];
+
+// ─── REGLAS SUTEL: verificar si una sección está habilitada para la categoría ─
+function secAllowed(cap, sec, cat) {
+  const rule = CAT_RULES[cat][cap];
+  if (!rule) return false;
+  if (rule === "all") return true;
+  if (Array.isArray(rule)) return rule.includes(sec);
+  return false;
+}
+
+function capAllowed(cap, cat) {
+  const rule = CAT_RULES[cat][cap];
+  if (!rule) return false;
+  if (rule === "all") return true;
+  if (Array.isArray(rule)) return rule.length > 0;
+  return false;
+}
+
+// ─── ESTADO ───────────────────────────────────────────────────────────────────
+let activeCat = null;
+let activeCap = "ALL";
+let activeSec = "ALL";
+let queue = [], current = null;
+let total = 0, correct = 0, answered = false;
+
+// ─── PANTALLA DE BIENVENIDA ───────────────────────────────────────────────────
+function selectCat(cat) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('sel'));
+  document.querySelector(`.cat-card.${cat}`).classList.add('sel');
+  const btn = document.getElementById('btn-start');
+  btn.classList.add('ready');
+}
+
+function startQuiz() {
+  if (!activeCat) return;
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const m = CAT_META[activeCat];
+  const pill = document.getElementById('hdr-pill');
+  pill.textContent = m.label;
+  pill.className = 'cat-pill ' + m.cls;
+  activeCap = "ALL"; activeSec = "ALL";
+  buildCaps(); buildSecs(); restart();
+}
+
+function goWelcome() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('welcome').style.display = 'flex';
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('sel'));
+  document.getElementById('btn-start').classList.remove('ready');
+  activeCat = null;
+}
+
+// ─── NAVEGACIÓN DE CAPÍTULOS ──────────────────────────────────────────────────
+function buildCaps() {
+  const row = document.getElementById('cap-row');
+  row.innerHTML = '';
+  CHAPTERS.forEach(c => {
+    const enabled = c.id === "ALL" || capAllowed(c.id, activeCat);
+    const b = document.createElement('button');
+    b.className = 'cap-btn' + (c.id === activeCap ? ' active' : '');
+    b.textContent = c.label;
+    b.disabled = !enabled;
+    if (enabled) b.onclick = () => selectCap(c.id);
+    row.appendChild(b);
+  });
+}
+
+function buildSecs() {
+  const row = document.getElementById('sec-row');
+  row.innerHTML = '';
+  if (activeCap === 'ALL' || !SECTIONS[activeCap]) return;
+  const all = document.createElement('button');
+  all.className = 'sec-btn' + (activeSec === 'ALL' ? ' active' : '');
+  all.textContent = 'Todas las secciones';
+  all.onclick = () => selectSec('ALL');
+  row.appendChild(all);
+  SECTIONS[activeCap].forEach(s => {
+    const [id, name] = s.split('|');
+    const enabled = secAllowed(activeCap, id, activeCat);
+    const b = document.createElement('button');
+    b.className = 'sec-btn' + (activeSec === id ? ' active' : '');
+    b.textContent = id + ' · ' + name;
+    b.disabled = !enabled;
+    if (enabled) b.onclick = () => selectSec(id);
+    row.appendChild(b);
+  });
+}
+
+function selectCap(id) {
+  activeCap = id; activeSec = 'ALL';
+  buildCaps(); buildSecs(); restart();
+}
+function selectSec(id) {
+  activeSec = id; buildSecs(); restart();
+}
+
+// ─── FILTRADO DE PREGUNTAS ────────────────────────────────────────────────────
+function getFiltered() {
+  return Q.filter(q => {
+    if (!secAllowed(q.cap, q.sec, activeCat)) return false;
+    if (activeCap !== 'ALL' && q.cap !== activeCap) return false;
+    if (activeSec !== 'ALL' && q.sec !== activeSec) return false;
+    return true;
+  });
+}
+
+// ─── LÓGICA DEL QUIZ ──────────────────────────────────────────────────────────
+function shuffle(a) {
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function restart() {
+  queue = shuffle([...getFiltered()]);
+  total = 0; correct = 0; answered = false;
+  document.getElementById('final').style.display = 'none';
+  document.getElementById('empty').style.display = 'none';
+  updateStats();
+  if (!queue.length) {
+    document.getElementById('qcard').style.display = 'none';
+    document.getElementById('empty').style.display = 'block';
+    document.getElementById('prog').style.width = '0%';
+    document.getElementById('plbl').textContent = 'Sin preguntas para este filtro en categoría '+CAT_META[activeCat].label;
+    document.getElementById('pcnt').textContent = '';
+    return;
+  }
+  document.getElementById('qcard').style.display = 'block';
+  loadQ();
+}
+
+function loadQ() {
+  if (!queue.length) { showFinal(); return; }
+  current = queue.pop(); answered = false;
+  const capLabel = CHAPTERS.find(c=>c.id===current.cap)?.label || current.cap;
+  document.getElementById('qtags').innerHTML =
+    `<span class="qtag tag-cap">${capLabel}</span>` +
+    `<span class="qtag tag-sec">${current.sec} · ${current.secN}</span>`;
+  document.getElementById('qtext').textContent = current.q;
+  document.getElementById('fb').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  const letters = ['A','B','C','D'];
+  const shu = shuffle(current.opts.map((o,i)=>({t:o,orig:i})));
+  document.getElementById('opts').innerHTML = shu.map((o,i) =>
+    `<button class="opt" data-l="${letters[i]}" onclick="check(this,${o.orig})">${o.t}</button>`
+  ).join('');
+  const done = total, tot = total+queue.length+1;
+  document.getElementById('prog').style.width = Math.round(done/tot*100)+'%';
+  document.getElementById('plbl').textContent = CAT_META[activeCat].label+' · '+capLabel+(activeSec!=='ALL'?' › '+activeSec:'');
+  document.getElementById('pcnt').textContent = done+' / '+tot;
+}
+
+function check(btn, sel) {
+  if (answered) return;
+  answered = true; total++;
+  const ok = sel === current.ans;
+  if (ok) correct++;
+  document.querySelectorAll('.opt').forEach(b => {
+    b.disabled = true;
+    const m = b.getAttribute('onclick').match(/check\(this,(\d+)\)/);
+    if (m && parseInt(m[1])===current.ans) b.classList.add('correct');
+  });
+  if (!ok) btn.classList.add('wrong');
+  const fb = document.getElementById('fb');
+  fb.className = 'feedback '+(ok?'correct':'wrong');
+  fb.innerHTML = `<strong>${ok?'✓ Correcto':'✗ Incorrecto'}</strong>${current.exp}`;
+  fb.style.display = 'block';
+  document.getElementById('btn-next').style.display = 'inline-block';
+  updateStats();
+}
+
+function nextQ() { loadQ(); }
+
+function updateStats() {
+  document.getElementById('s-t').textContent = total;
+  document.getElementById('s-c').textContent = correct;
+  document.getElementById('s-p').textContent = total>0 ? Math.round(correct/total*100)+'%' : '—';
+}
+
+function showFinal() {
+  document.getElementById('qcard').style.display = 'none';
+  const pct = total>0 ? Math.round(correct/total*100) : 0;
+  const passed = pct >= 70;
+  document.getElementById('fscore').textContent = pct+'%';
+  document.getElementById('fscore').style.borderColor = passed ? 'var(--ok)' : 'var(--err)';
+  document.getElementById('fscore').style.color = passed ? 'var(--ok)' : 'var(--err)';
+  document.getElementById('ftitle').textContent = pct>=80 ? '¡Excelente!' : passed ? '¡Aprobado!' : 'Hay que repasar';
+  document.getElementById('fsub').textContent = correct+' de '+total+' correctas — '+
+    (pct>=80 ? 'Estás muy bien preparado para el examen.' :
+     passed  ? 'Superaste el 70% mínimo de la SUTEL. Sigue practicando.' :
+               'No alcanzaste el 70% mínimo. Repasa el material y vuelve a intentarlo.');
+  document.getElementById('final').style.display = 'block';
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('pcnt').textContent = total+' / '+total;
+  updateStats();
+}
+</script>
+</body>
+</html>
