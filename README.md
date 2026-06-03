@@ -1,6 +1,8 @@
 # 📻 Simulador de Examen de Radioaficionado - Costa Rica
 
-![Banner del Proyecto](https://via.placeholder.com/800x200/1a1a2e/ffffff?text=Simulador+de+Examen+Radioaficionado+CR)
+<p align="center">
+  <img src="banner.png" alt="Simulador de Examen de Radioaficionado - Costa Rica" width="100%">
+</p>
 
 <p align="center">
   <a href="https://ti3wti.github.io/examen-tango-india">
