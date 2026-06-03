@@ -1,67 +1,79 @@
-# Simulador de Examen de Radioaficionado - Costa Rica
+# 📻 Simulador de Examen de Radioaficionado - Costa Rica
 
-Herramienta de practica para personas que desean obtener su licencia de radioaficionado en Costa Rica, basada en el temario oficial establecido por la **SUTEL** (Superintendencia de Telecomunicaciones) y el **Manual del Radioaficionado de Costa Rica v3.0**.
+![Banner del Proyecto](https://via.placeholder.com/800x200/1a1a2e/ffffff?text=Simulador+de+Examen+Radioaficionado+CR)
 
----
+<p align="center">
+  <a href="https://ti3wti.github.io/examen-tango-india">
+    <img src="https://img.shields.io/badge/🚀_Probar_Ahora-2ea44f?style=for-the-badge" alt="Probar Ahora">
+  </a>
+  <img src="https://img.shields.io/badge/Versión-1.0-blue?style=for-the-badge" alt="Versión">
+  <img src="https://img.shields.io/badge/Temario-SUTEL_2025-orange?style=for-the-badge" alt="Temario SUTEL">
+  <img src="https://img.shields.io/badge/HTML/CSS/JS-Web-yellow?style=for-the-badge" alt="Tecnologías">
+</p>
 
-## Acceso
-
-**[https://ti3wti.github.io/examen-tango-india](https://ti3wti.github.io/examen-tango-india)**
-
-No requiere instalacion ni cuenta. Funciona en celular y computadora.
-
----
-
-## Caracteristicas
-
-- **264 preguntas** distribuidas en los 8 capitulos del manual
-- **Preguntas con imagenes** de circuitos, componentes, diagramas y patrones de radiacion
-- **Seleccion aleatoria** del banco de preguntas en cada sesion (como el examen real de la SUTEL)
-- **Retroalimentacion inmediata** con explicacion detallada de cada respuesta
-- **Filtro por categoria** segun el temario de la SUTEL:
-  - **Novicio**: Cap 1-3 completos - Cap 4 (secciones 4.1-4.5) - Cap 5 (secciones 5.1-5.2) - Cap 6-8 completos
-  - **Intermedio**: Cap 1-3 completos - Cap 4 (secciones 4.1-4.8) - Cap 5-8 completos
-  - **Superior**: Todos los capitulos completos
-- **Filtro por capitulo y seccion** para practicar temas especificos
-- **Indicador de puntaje** con referencia al 70% minimo requerido por la SUTEL
+<p align="center">
+  Herramienta de práctica gratuita para obtener tu licencia de radioaficionado en Costa Rica. 
+  Basada en el temario oficial de la <strong>SUTEL</strong> y el <em>Manual del Radioaficionado de Costa Rica v3.0</em>.
+</p>
 
 ---
 
-## Contenido por capitulo
+## ✨ Características Principales
 
-| Capitulo | Titulo | Preguntas |
-|---|---|---|
-| 1 | Introduccion a la radioaficion | 28 |
-| 2 | Fundamentos de Radio y Senales | 25 |
-| 3 | Procedimientos y practicas operativas | 35 |
-| 4 | Electricidad, componentes y circuitos | 55 |
-| 5 | Propagacion, antenas y alimentadores | 35 |
-| 6 | Equipos para radioaficionados | 29 |
-| 7 | Metodos de comunicacion entre radioaficionados | 26 |
-| 8 | Seguridad de la estacion | 31 |
+- 📱 **100% Responsive**: Funciona perfectamente en celular y computadora. No requiere instalación ni crear cuentas.
+- 🎯 **Banco Realista**: 264 preguntas distribuidas en los 8 capítulos del manual oficial.
+- 🔄 **Aleatoriedad SUTEL**: Selección aleatoria de preguntas en cada sesión, replicando el comportamiento real del examen de la SUTEL.
+- 🖼️ **Soporte Multimedia**: Preguntas con imágenes de circuitos, componentes, diagramas y patrones de radiación.
+- 💡 **Retroalimentación Inmediata**: Explicación detallada de cada respuesta al momento de seleccionar.
+- 📊 **Filtros Inteligentes**: Practica por categoría (Novicio, Intermedio, Superior) o por capítulo/sección específica.
+- ✅ **Indicador de Puntaje**: Referencia visual al 70% mínimo requerido para aprobar.
 
 ---
 
-## Nota importante
+## 📚 Contenido por Capítulo
 
-> La SUTEL define las preguntas del examen teorico de manera aleatoria y automatica mediante su plataforma web. Por tanto, si una persona realiza en varias ocasiones la prueba teorica para la misma categoria, sera evaluada con preguntas diferentes respetando el temario detallado anteriormente.
+| Cap. | Título del Capítulo | Preguntas |
+| :---: | :--- | :---: |
+| **1** | Introducción a la radioafición | 28 |
+| **2** | Fundamentos de Radio y Señales | 25 |
+| **3** | Procedimientos y prácticas operativas | 35 |
+| **4** | Electricidad, componentes y circuitos | 55 |
+| **5** | Propagación, antenas y alimentadores | 35 |
+| **6** | Equipos para radioaficionados | 29 |
+| **7** | Métodos de comunicación entre radioaficionados | 26 |
+| **8** | Seguridad de la estación | 31 |
 
-Este simulador replica ese comportamiento: cada vez que se inicia una practica, las preguntas se seleccionan aleatoriamente del banco disponible para la categoria y capitulo elegidos.
+> [!IMPORTANT]
+> **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica exactamente ese comportamiento.
 
 ---
 
-## Fuentes
+## 📸 Vista Previa
 
-- **Manual del Radioaficionado de Costa Rica v3.0** (agosto 2025)
-- **Reglamento del Servicio de Radioaficionados** - SUTEL
-- **Plan Nacional de Atribucion de Frecuencias (PNAF)** - SUTEL
-- **Informacion oficial sobre radioaficionados**: [sutel.go.cr](https://www.sutel.go.cr/pagina/radio-aficionados-y-banda-ciudadana)
+*(💡 Consejo: Reemplaza esta imagen con una captura de pantalla real de tu simulador)*
+![Vista previa del simulador](https://via.placeholder.com/800x400/16213e/ffffff?text=Captura+de+Pantalla+del+Simulador)
 
 ---
 
-## Creditos
+## 📖 Fuentes Oficiales
 
-Desarrollado por **[TI3WTI](https://www.qrz.com/db/TI3WTI)** como herramienta de apoyo para la comunidad de radioaficionados de Costa Rica.
+Este proyecto se basa estrictamente en la normativa vigente:
+- 📘 Manual del Radioaficionado de Costa Rica v3.0 (agosto 2025)
+- ⚖️ Reglamento del Servicio de Radioaficionados - SUTEL
+- 📡 Plan Nacional de Atribución de Frecuencias (PNAF) - SUTEL
+- 🌐 [Información oficial SUTEL](https://www.sutel.go.cr/pagina/radio-aficionados-y-banda-ciudadana)
 
-- **RadioLab - TEC** - Escuela de Ingenieria Electronica, Instituto Tecnologico de Costa Rica (ITCR)
-- **TI0ARC** - Asociacion de Radioaficionados Cartago
+---
+
+## 🤝 Créditos y Agradecimientos
+
+Desarrollado con ❤️ por **[TI3WTI](https://www.qrz.com/db/TI3WTI)** como herramienta de apoyo para la comunidad de radioaficionados de Costa Rica.
+
+Agradecimientos especiales a:
+- 🎓 **RadioLab - TEC**: Escuela de Ingeniería Electrónica, Instituto Tecnológico de Costa Rica (ITCR)
+- 📻 **TI0ARC**: Asociación de Radioaficionados de Cartago
+
+---
+<p align="center">
+  <sub>¿Encontraste un error o tienes una sugerencia? <a href="https://github.com/ti3wti/examen-tango-india/issues">Abre un issue</a> o contribuye al proyecto.</sub>
+</p>
