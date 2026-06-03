@@ -38,7 +38,7 @@
 | **7** | Métodos de comunicación entre radioaficionados | 26 |
 | **8** | Seguridad de la estación | 31 |
 
-> [!IMPORTANTE]
+> [!IMPORTANT]
 > **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica exactamente ese comportamiento.
 
 ---
