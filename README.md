@@ -45,8 +45,8 @@
 
 ## 📸 Vista Previa
 
-*(💡 Consejo: Reemplaza esta imagen con una captura de pantalla real de tu simulador)*
-![Vista previa del simulador](https://via.placeholder.com/800x400/16213e/ffffff?text=Captura+de+Pantalla+del+Simulador)
+
+![Vista previa del simulador](captura.png)
 
 ---
 
