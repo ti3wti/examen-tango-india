@@ -4,10 +4,7 @@
   <a href="https://ti3wti.github.io/examen-tango-india">
     <img src="https://img.shields.io/badge/🚀_Probar_Ahora-2ea44f?style=for-the-badge" alt="Probar Ahora">
   </a>
-  <img src="https://img.shields.io/badge/Versión-1.0-blue?style=for-the-badge" alt="Versión">
-  <img src="https://img.shields.io/badge/Temario-SUTEL_2025-orange?style=for-the-badge" alt="Temario SUTEL">
-  <img src="https://img.shields.io/badge/HTML/CSS/JS-Web-yellow?style=for-the-badge" alt="Tecnologías">
-</p>
+  </p>
 
 <p align="center">
   Herramienta de práctica gratuita para obtener tu licencia de radioaficionado en Costa Rica. 
