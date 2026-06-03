@@ -44,8 +44,8 @@ header{border-bottom:1px solid var(--bdr);padding:.75rem 1.25rem;display:flex;al
 .cat-pill.int{color:var(--int);border-color:var(--int);background:#0d1e30}
 .cat-pill.sup{color:var(--sup);border-color:var(--sup);background:#1e1500}
 .hstats{display:flex;gap:1rem;margin-left:auto;font-family:var(--mono);font-size:11px}
-.ref-hdr{font-family:var(--mono);font-size:10px;color:var(--acc2);background:#0d1e30;border:1px solid var(--acc2);border-radius:20px;padding:4px 12px;letter-spacing:.03em;white-space:nowrap;display:none}
-.ref-hdr::before{content:"📖 "}
+.tag-ref{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:4px;letter-spacing:.03em;color:var(--acc2);background:#0d1e30;border:1px solid #2d4a6e}
+.tag-ref::before{content:"📖 "}
 .hs{display:flex;flex-direction:column;align-items:center}
 .hsn{font-size:15px;font-weight:700;color:var(--tx)}.hsn.g{color:var(--ok)}
 .hsl{color:var(--tx3);font-size:9px;letter-spacing:.08em}
@@ -102,7 +102,6 @@ main{max-width:720px;margin:0 auto;padding:1.25rem 1rem 4rem}
   .w-title{font-size:21px}.w-cards{grid-template-columns:1fr}
   header{padding:.6rem 1rem}.logo{font-size:10px}.hsn{font-size:13px}
   .qtext{font-size:15px}.opt{font-size:14px;padding:10px 12px}.hstats{gap:.75rem}
-  .ref-hdr{font-size:9px;padding:3px 8px}
 }
 </style>
 </head>
@@ -136,7 +135,6 @@ main{max-width:720px;margin:0 auto;padding:1.25rem 1rem 4rem}
   <header>
     <div class="logo">TI&#9654; <span>Simulador · CR</span></div>
     <span class="cat-pill" id="hdr-pill" onclick="goWelcome()"></span>
-    <span class="ref-hdr" id="ref-hdr"></span>
     <div class="hstats">
       <div class="hs"><span class="hsn" id="s-t">0</span><span class="hsl">TOTAL</span></div>
       <div class="hs"><span class="hsn g" id="s-c">0</span><span class="hsl">CORRECTAS</span></div>
@@ -600,7 +598,8 @@ function loadQ(){
   const capLabel=CHAPTERS.find(c=>c.id===current.cap)?.label||current.cap;
   document.getElementById('qtags').innerHTML=
     '<span class="qtag tag-cap">'+capLabel+'</span>'+
-    '<span class="qtag tag-sec">'+current.sec+' - '+current.secN+'</span>';
+    '<span class="qtag tag-sec">'+current.sec+' - '+current.secN+'</span>'+
+    (current.ref?'<span class="qtag tag-ref">'+current.ref+'</span>':'');
   const media=document.getElementById('qmedia');
   media.innerHTML='';
   if(current.img){
@@ -619,10 +618,6 @@ function loadQ(){
   document.getElementById('qtext').textContent=current.q;
   document.getElementById('fb').style.display='none';
   document.getElementById('btn-next').style.display='none';
-  // Badge referencia en header
-  const refEl=document.getElementById('ref-hdr');
-  if(current.ref){refEl.textContent=current.ref;refEl.style.display='inline';}
-  else{refEl.style.display='none';}
   const letters=['A','B','C','D'];
   const shu=shuffle(current.opts.map((o,i)=>({t:o,orig:i})));
   document.getElementById('opts').innerHTML=shu.map((o,i)=>
