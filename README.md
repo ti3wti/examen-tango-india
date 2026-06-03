@@ -14,7 +14,7 @@ No requiere instalacion ni cuenta. Funciona en celular y computadora.
 
 ## Caracteristicas
 
-- **223 preguntas** distribuidas en los 8 capitulos del manual
+- **256 preguntas** distribuidas en los 8 capitulos del manual
 - **Preguntas con imagenes** de circuitos, componentes, diagramas y patrones de radiacion
 - **Seleccion aleatoria** del banco de preguntas en cada sesion (como el examen real de la SUTEL)
 - **Retroalimentacion inmediata** con explicacion detallada de cada respuesta
@@ -31,14 +31,14 @@ No requiere instalacion ni cuenta. Funciona en celular y computadora.
 
 | Capitulo | Titulo | Preguntas |
 |---|---|---|
-| 1 | Introduccion a la radioaficion | 25 |
-| 2 | Fundamentos de Radio y Senales | 23 |
-| 3 | Procedimientos y practicas operativas | 30 |
-| 4 | Electricidad, componentes y circuitos | 39 |
-| 5 | Propagacion, antenas y alimentadores | 30 |
-| 6 | Equipos para radioaficionados | 26 |
-| 7 | Metodos de comunicacion entre radioaficionados | 23 |
-| 8 | Seguridad de la estacion | 27 |
+| 1 | Introduccion a la radioaficion | 28 |
+| 2 | Fundamentos de Radio y Senales | 25 |
+| 3 | Procedimientos y practicas operativas | 35 |
+| 4 | Electricidad, componentes y circuitos | 46 |
+| 5 | Propagacion, antenas y alimentadores | 35 |
+| 6 | Equipos para radioaficionados | 29 |
+| 7 | Metodos de comunicacion entre radioaficionados | 27 |
+| 8 | Seguridad de la estacion | 31 |
 
 ---
 
