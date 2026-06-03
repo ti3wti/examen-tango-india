@@ -1,10 +1,6 @@
 # 📻 Simulador de Examen de Radioaficionado - Costa Rica
 
 <p align="center">
-  <img src="banner.png" alt="Simulador de Examen de Radioaficionado - Costa Rica" width="100%">
-</p>
-
-<p align="center">
   <a href="https://ti3wti.github.io/examen-tango-india">
     <img src="https://img.shields.io/badge/🚀_Probar_Ahora-2ea44f?style=for-the-badge" alt="Probar Ahora">
   </a>
@@ -74,6 +70,10 @@ Desarrollado con ❤️ por **[TI3WTI](https://www.qrz.com/db/TI3WTI)** como her
 Agradecimientos especiales a:
 - 🎓 **RadioLab - TEC**: Escuela de Ingeniería Electrónica, Instituto Tecnológico de Costa Rica (ITCR)
 - 📻 **TI0ARC**: Asociación de Radioaficionados de Cartago
+
+- <p align="center">
+  <img src="banner.png" alt="Simulador de Examen de Radioaficionado - Costa Rica" width="100%">
+</p>
 
 ---
 <p align="center">
