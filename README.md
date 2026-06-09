@@ -62,7 +62,7 @@ Este proyecto se basa estrictamente en la normativa vigente:
 
 ## 🤝 Créditos y Agradecimientos
 
-Desarrollado con ❤️ por **[TI3WTI](https://www.qrz.com/db/TI3WTI)** como herramienta de apoyo para la comunidad de radioaficionados de Costa Rica.
+Desarrollado por **[TI3WTI](https://www.qrz.com/db/TI3WTI)** como herramienta de apoyo para la comunidad de radioaficionados de Costa Rica.
 
 Agradecimientos especiales a:
 - 🎓 **RadioLab - TEC**: Escuela de Ingeniería Electrónica, Instituto Tecnológico de Costa Rica (ITCR)
