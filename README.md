@@ -15,13 +15,13 @@
 
 ## ✨ Características Principales
 
-- 📱 **100% Responsive**: Funciona perfectamente en celular y computadora. No requiere instalación ni crear cuentas.
-- 🎯 **Banco Realista**: 264 preguntas distribuidas en los 8 capítulos del manual oficial.
-- 🔄 **Aleatoriedad**: Selección aleatoria de preguntas en cada sesión, replicando el comportamiento real del examen de la SUTEL.
-- 🖼️ **Soporte Multimedia**: Preguntas con imágenes de circuitos, componentes, diagramas y patrones de radiación.
-- 💡 **Retroalimentación Inmediata**: Explicación detallada de cada respuesta al momento de seleccionar.
-- 📊 **Filtros Inteligentes**: Practica por categoría (Novicio, Intermedio, Superior) o por capítulo/sección específica.
-- ✅ **Indicador de Puntaje**: Referencia visual al 70% mínimo requerido para aprobar.
+-  **100% Responsive**: Funciona perfectamente en celular y computadora. No requiere instalación ni crear cuentas.
+-  **Banco Realista**: 264 preguntas distribuidas en los 8 capítulos del manual oficial.
+-  **Aleatoriedad**: Selección aleatoria de preguntas en cada sesión, replicando el comportamiento real del examen de la SUTEL.
+-  **Soporte Multimedia**: Preguntas con imágenes de circuitos, componentes, diagramas y patrones de radiación.
+-  **Retroalimentación Inmediata**: Explicación detallada de cada respuesta al momento de seleccionar.
+-  **Filtros Inteligentes**: Practica por categoría (Novicio, Intermedio, Superior) o por capítulo/sección específica.
+-  **Indicador de Puntaje**: Referencia visual al 70% mínimo requerido para aprobar.
 
 ---
 
