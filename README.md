@@ -8,7 +8,7 @@
 
 <p align="center">
   Herramienta de práctica gratuita para obtener tu licencia de radioaficionado en Costa Rica. 
-  Basada en el temario oficial de la <strong>SUTEL</strong> y el <em>Manual del Radioaficionado de Costa Rica v3.0</em>.
+  Inspirada en el estilo y temario del examen oficial de la <strong>SUTEL</strong>, con contenido basado en el <em>Manual del Radioaficionado de Costa Rica v3.0</em> y fuentes normativas de acceso público.
 </p>
 
 ---
@@ -17,7 +17,7 @@
 
 - **100% Responsive**: Funciona perfectamente en celular y computadora. No requiere instalación ni crear cuentas.
 - **Banco Realista**: 285 preguntas distribuidas en los 8 capítulos del manual oficial.
-- **Aleatoriedad**: Selección aleatoria de preguntas en cada sesión, replicando el comportamiento real del examen de la SUTEL.
+- **Aleatoriedad**: Selección aleatoria de preguntas en cada sesión, replicando el estilo del examen de la SUTEL.
 - **Soporte Multimedia**: Preguntas con imágenes de circuitos, componentes, diagramas y patrones de radiación.
 - **Retroalimentación Inmediata**: Explicación detallada de cada respuesta al momento de seleccionar.
 - **Referencia al Manual**: Cada pregunta indica la página exacta del Manual CR v3.0 donde se encuentra el tema.
@@ -41,7 +41,7 @@
 | | **Total** | **285** |
 
 > [!IMPORTANT]
-> **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica exactamente ese comportamiento.
+> **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica ese estilo, pero **las preguntas aquí contenidas no son las preguntas oficiales de la SUTEL** — son preguntas elaboradas a partir del contenido del Manual oficial y fuentes normativas públicas.
 
 ---
 
@@ -51,13 +51,23 @@
 
 ---
 
-## 📖 Fuentes Oficiales
+## ⚠️ Aviso Legal
 
-Este proyecto se basa estrictamente en la normativa vigente:
+Este simulador es una herramienta de estudio independiente, **no oficial**. Las preguntas y explicaciones han sido elaboradas a partir de:
+
+- El contenido del **Manual del Radioaficionado de Costa Rica v3.0**, publicado por la SUTEL y de acceso público.
+- La normativa vigente de acceso público (Reglamento, PNAF, Resoluciones de la SUTEL).
+- Generación asistida por inteligencia artificial, tomando como base los contenidos anteriores.
+
+Este proyecto no está afiliado, patrocinado ni respaldado por la SUTEL. Para el examen oficial, consulta siempre [sutel.go.cr](https://www.sutel.go.cr/pagina/radio-aficionados-y-banda-ciudadana).
+
+---
+
+## 📖 Fuentes
 
 - 📘 Manual del Radioaficionado de Costa Rica v3.0 (agosto 2025)
-- ⚖️ Reglamento del Servicio de Radioaficionados - Decreto Ejecutivo N° 40639-MICITT
-- 📡 Plan Nacional de Atribución de Frecuencias (PNAF) - SUTEL
+- ⚖️ Reglamento del Servicio de Radioaficionados — Decreto Ejecutivo N° 40639-MICITT
+- 📡 Plan Nacional de Atribución de Frecuencias (PNAF) — SUTEL
 - 📋 Resolución RCS-264-2025 — Procedimiento y mecanismos para la realización del examen teórico
 - 🌐 [Información oficial SUTEL](https://www.sutel.go.cr/pagina/radio-aficionados-y-banda-ciudadana)
 
