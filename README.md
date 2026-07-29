@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Herramienta de práctica gratuita para obtener tu licencia de radioaficionado en Costa Rica. 
+  Herramienta de práctica gratuita para obtener tu licencia de radioaficionado en Costa Rica.
   Inspirada en el estilo y temario del examen oficial de la <strong>SUTEL</strong>, con contenido basado en el <em>Manual del Radioaficionado de Costa Rica v3.0</em> y fuentes normativas de acceso público.
 </p>
 
@@ -41,7 +41,7 @@
 | | **Total** | **285** |
 
 > [!IMPORTANT]
-> **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica ese estilo, pero **las preguntas aquí contenidas no son las preguntas oficiales de la SUTEL** — son preguntas elaboradas a partir del contenido del Manual oficial y fuentes normativas públicas.
+> **Nota sobre el examen real:** La SUTEL define las preguntas del examen teórico de manera aleatoria y automática mediante su plataforma web. Si realizas la prueba varias veces para la misma categoría, serás evaluado con preguntas diferentes. Este simulador replica ese estilo, pero **las preguntas aquí contenidas no son las preguntas oficiales de la SUTEL** — son preguntas elaboradas a partir del contenido del Manual oficial, fuentes normativas públicas, o generadas por IA.
 
 ---
 
@@ -51,7 +51,7 @@
 
 ---
 
-## ⚠️ Aviso Legal
+## ⚠️ Aviso
 
 Este simulador es una herramienta de estudio independiente, **no oficial**. Las preguntas y explicaciones han sido elaboradas a partir de:
 
